@@ -14,6 +14,7 @@ module.exports = {
       jsx: true
     },
     moduleResolution: "node",
+    resolveJsonModule: true,
     exclude: [
       "node_modules",
       "**/*.less"

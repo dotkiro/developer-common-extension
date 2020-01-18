@@ -4,6 +4,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { NODE_ENV } = process.env
 
@@ -20,7 +21,7 @@ module.exports = {
   },
 
   output: {
-    filename: '[name].[hash:8].js',
+    // filename: '[name].[hash:8].js',
   },
 
   target: 'web',
@@ -42,9 +43,22 @@ module.exports = {
   },
 
   module: {
+    
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /manifest.json$/,
+        type: 'javascript/auto',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+            }
+          }
+        ]
+      },
+      {
+        test: /.tsx?$/,
         exclude: /node_modules/,
         use: [
           {
@@ -59,19 +73,21 @@ module.exports = {
         test: /\.(png|jpe?g|gif|woff2?|ttf|svg|eot)$/,
         use: [
           {
-            loader: 'url-loader',
+            loader: 'file-loader',
             options: {
-              limit: 8192
+              limit: 1,
+              name: 'images/[name].[ext]',
             }
           }
         ]
-      }
+      },
     ]
   },
 
   plugins: [
     new webpack.BannerPlugin('From Kiro <dotkiro@gmail.com>'),
     new FriendlyErrorsWebpackPlugin(),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: './publish/index.html',
@@ -116,13 +132,13 @@ module.exports = {
       // automaticNameDelimiter: '~',
       // name: true,
       cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: 2,
-          minChunks: 2,
-        },
+        // vendors: {
+        //   test: /[\\/]node_modules[\\/]/,
+        //   name: 'vendors',
+        //   chunks: 'all',
+        //   priority: 2,
+        //   minChunks: 2,
+        // },
         // default: {
         //   minChunks: 2,
         //   priority: -20,
@@ -132,6 +148,3 @@ module.exports = {
     })
   }
 }
-
-
-console.log(JSON.stringify(module.exports))

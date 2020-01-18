@@ -1,0 +1,10 @@
+{
+   "name": "Kiro Development",
+   "description" : "Kiro Development Extension",
+   "version": "0.0.1",
+   "manifest_version": 2,
+   
+   "background": {
+      "scripts": ["bg.js"]
+   }
+ }

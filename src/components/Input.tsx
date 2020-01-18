@@ -25,7 +25,6 @@ const InputArea = styled('input')({
   backgroundColor: '#fff',
   alignItems: 'center',
   justifyContent: 'center',
-  cursor: 'pointer',
   boxShadow: 'none',
   border: 'none',
   outline: 'none',
