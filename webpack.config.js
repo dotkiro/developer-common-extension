@@ -2,21 +2,31 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const webpack = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const { NODE_ENV } = process.env
 
+const isProduction = NODE_ENV === 'production'
+
+const divideEnv = (prod, unpord) => isProduction ? prod : unpord
+
 module.exports = {
 
-  mode: NODE_ENV === 'production' ? 'production' : 'development',
+  mode: divideEnv('production', 'development'),
 
   entry: {
     app: './src/index.tsx'
   },
 
+  output: {
+    filename: '[name].[hash:8].js',
+  },
+
   target: 'web',
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.tsx', '.ts', '.js']
   },
 
   // devtool: '',
@@ -38,7 +48,10 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            }
           },
         ]
       },
@@ -81,5 +94,44 @@ module.exports = {
         minifyURLs: true
       }
     }),
-  ]
+    // new BundleAnalyzerPlugin()
+  ],
+  optimization: {
+    minimizer: divideEnv([
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: false,
+        terserOptions: {
+        }
+      }),
+    ]),
+    splitChunks: divideEnv({
+      // chunks: 'initial', 
+      // minSize: 3000,
+      // maxSize: 0,
+      // minChunks: 1,
+      // maxAsyncRequests: 5,
+      // maxInitialRequests: 3,
+      // automaticNameDelimiter: '~',
+      // name: true,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 2,
+          minChunks: 2,
+        },
+        // default: {
+        //   minChunks: 2,
+        //   priority: -20,
+        //   reuseExistingChunk: true
+        // }
+      }
+    })
+  }
 }
+
+
+console.log(JSON.stringify(module.exports))

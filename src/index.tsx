@@ -8,4 +8,3 @@ const root = document.createElement('div')
 render(<App />, root)
 
 document.body.appendChild(root)
- console.log(23)
