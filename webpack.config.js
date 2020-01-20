@@ -17,7 +17,9 @@ module.exports = {
   mode: divideEnv('production', 'development'),
 
   entry: {
-    app: './src/index.tsx'
+    app: './src/index.tsx',
+    bg: './src/background.ts',
+    content: './src/content.ts'
   },
 
   output: {
